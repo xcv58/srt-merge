@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRT Merger (No Upload)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f7;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #1d1d1f;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #fafafa;
+        }
+
+        .upload-area:hover {
+            border-color: #0071e3;
+            background: #f0f7ff;
+        }
+
+        .upload-area p {
+            margin: 10px 0 0;
+            color: #666;
+        }
+
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 13px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            background: #0071e3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #005bb5;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: #e5f5ff;
+            color: #0071e3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <span class="badge">Run Locally • No Uploads</span>
+        <h1>SRT Video Merger</h1>
+        <p>Select the folder containing your sequential .srt and .mov files. <br>Processing happens instantly in your
+            browser.</p>
+
+        <div class="upload-area" onclick="document.getElementById('dirInput').click()">
+            <strong>Click to Select Folder</strong>
+            <p>or drag folder here (Chrome/Edge)</p>
+        </div>
+
+        <input type="file" id="dirInput" webkitdirectory directory multiple style="display:none">
+
+        <div id="log">Waiting for folder...</div>
+        <button id="downloadBtn" onclick="downloadResult()">Download Merged SRT</button>
+    </div>
+
+    <script>
+        let mergedContent = "";
+        const logEl = document.getElementById('log');
+
+        // Utility: Natural Sort (so 1, 2, 10 sorts correctly)
+        const naturalSort = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
+
+        function log(msg) {
+            logEl.textContent += msg + "\n";
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        // 1. Handle File Selection
+        document.getElementById('dirInput').addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            log("Found " + files.length + " files. Scanning...");
+            await processFiles(files);
+        });
+
+        // 2. Extract number from filename (logic ported from Python)
+        function extractNumber(filename) {
+            const matchStart = filename.match(/^(\d+)/);
+            if (matchStart) return parseInt(matchStart[1]);
+
+            const matchEnd = filename.match(/(\d+)(?:\.[^.]+)?$/);
+            if (matchEnd) return parseInt(matchEnd[1]);
+
+            return null;
+        }
+
+        // 3. Time Helpers
+        function timeToMs(timeStr) {
+            // 00:00:20,123 -> ms
+            const [h, m, s_ms] = timeStr.split(':');
+            const [s, ms] = s_ms.split(',');
+            return (parseInt(h) * 3600000) + (parseInt(m) * 60000) + (parseInt(s) * 1000) + parseInt(ms);
+        }
+
+        function msToTime(duration) {
+            // ms -> 00:00:20,123
+            const ms = duration % 1000;
+            duration = (duration - ms) / 1000;
+            const s = duration % 60;
+            duration = (duration - s) / 60;
+            const m = duration % 60;
+            const h = (duration - m) / 60;
+
+            const pad = (n, z = 2) => ('00' + n).slice(-z);
+            return `${pad(h)}:${pad(m)}:${pad(s)},${pad(ms, 3)}`;
+        }
+
+        // 4. Get Video Duration via Browser
+        function getVideoDuration(file) {
+            return new Promise((resolve, reject) => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+
+                video.onloadedmetadata = function () {
+                    window.URL.revokeObjectURL(video.src);
+                    resolve(video.duration * 1000); // return in ms
+                }
+
+                video.onerror = function () {
+                    resolve(0); // If browser can't read codec, assume 0 (prevents crash)
+                }
+
+                video.src = URL.createObjectURL(file);
+            });
+        }
+
+        // 5. Main Processing Logic
+        async function processFiles(fileList) {
+            logEl.textContent = "Analyzing files...\n";
+            document.getElementById('downloadBtn').style.display = 'none';
+
+            // Group files
+            const pairs = {}; // { 1: {srt: File, mov: File}, 2: ... }
+
+            for (let f of fileList) {
+                if (f.name.startsWith('.')) continue; // skip hidden files
+
+                const num = extractNumber(f.name);
+                if (num === null) continue;
+
+                if (!pairs[num]) pairs[num] = { id: num };
+
+                if (f.name.toLowerCase().endsWith('.srt')) pairs[num].srt = f;
+                else if (f.name.toLowerCase().endsWith('.mov')) pairs[num].mov = f;
+            }
+
+            // Convert to array and sort
+            const sortedPairs = Object.values(pairs)
+                .filter(p => p.srt && p.mov) // Must have both
+                .sort((a, b) => a.id - b.id);
+
+            if (sortedPairs.length === 0) {
+                log("No matching SRT/MOV pairs found.");
+                return;
+            }
+
+            let cumulativeDuration = 0;
+            let finalSrtContent = "";
+            let globalIndex = 1;
+
+            for (let i = 0; i < sortedPairs.length; i++) {
+                const pair = sortedPairs[i];
+                log(`Processing #${pair.id}: ${pair.srt.name}`);
+
+                // A. Get Duration of PREVIOUS video to offset CURRENT srt
+                if (i > 0) {
+                    const prevMov = sortedPairs[i - 1].mov;
+                    log(`   ...Reading duration of previous video (${prevMov.name})`);
+                    const duration = await getVideoDuration(prevMov);
+                    cumulativeDuration += duration;
+                }
+
+                // B. Read and Parse SRT
+                const text = await pair.srt.text();
+
+                // Regex to find timestamps: 00:00:00,000 --> 00:00:00,000
+                // We use a replace callback to modify them on the fly
+                const shiftedText = text.replace(
+                    /(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/g,
+                    (match, start, end) => {
+                        const newStart = msToTime(timeToMs(start) + cumulativeDuration);
+                        const newEnd = msToTime(timeToMs(end) + cumulativeDuration);
+                        return `${newStart} --> ${newEnd}`;
+                    }
+                );
+
+                // C. Clean up indexes (1, 2, 3...)
+                // We strip existing indexes and just rebuild the blocks
+                // Simple block parsing: split by double newline
+                const blocks = shiftedText.replace(/\r\n/g, '\n').split('\n\n');
+
+                for (let block of blocks) {
+                    block = block.trim();
+                    if (!block) continue;
+
+                    // Remove the old index number at the start
+                    const lines = block.split('\n');
+                    if (lines.length > 0 && /^\d+$/.test(lines[0])) {
+                        lines.shift(); // remove old index
+                    }
+
+                    finalSrtContent += `${globalIndex}\n${lines.join('\n')}\n\n`;
+                    globalIndex++;
+                }
+            }
+
+            mergedContent = finalSrtContent;
+            log("\nDONE! Ready to download.");
+            document.getElementById('downloadBtn').style.display = 'inline-block';
+        }
+
+        function downloadResult() {
+            const blob = new Blob([mergedContent], { type: 'text/srt' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "merged_subtitles.srt";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+
+</body>
+
+</html>
