@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f5f5f7" rx="12" ry="12"/>
+  
+  <!-- Header -->
+  <text x="20" y="30" font-family="-apple-system, sans-serif" font-size="14" font-weight="bold" fill="#333">Correct Folder Structure Example:</text>
+  
+  <!-- File List Container -->
+  <rect x="20" y="45" width="360" height="235" fill="white" stroke="#e0e0e0" rx="8" ry="8"/>
+  
+  <!-- File Item 1 (MOV) -->
+  <g transform="translate(40, 60)">
+    <rect width="320" height="26" fill="#f0f7ff" rx="4"/>
+    <text x="10" y="18" font-family="monospace" font-size="13" fill="#333">video_01.mov</text>
+    <path d="M290 13 L300 21 L315 5" stroke="#28a745" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- File Item 1 (SRT) -->
+  <g transform="translate(40, 92)">
+    <rect width="320" height="26" fill="#f0f7ff" rx="4"/>
+    <text x="10" y="18" font-family="monospace" font-size="13" fill="#333">video_01.srt</text>
+    <path d="M290 13 L300 21 L315 5" stroke="#28a745" stroke-width="2" fill="none"/>
+  </g>
+
+  <!-- Group 1 Bracket -->
+  <path d="M20 73 L35 73 L35 105 L20 105" stroke="#0071e3" stroke-width="2" fill="none"/>
+
+  <!-- Separator Dots -->
+  <text x="200" y="140" text-anchor="middle" font-weight="bold" fill="#ccc">...</text>
+
+  <!-- File Item 2 (MOV) -->
+  <g transform="translate(40, 155)">
+    <rect width="320" height="26" fill="#f0f7ff" rx="4"/>
+    <text x="10" y="18" font-family="monospace" font-size="13" fill="#333">video_10.mov</text>
+    <path d="M290 13 L300 21 L315 5" stroke="#28a745" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- File Item 2 (SRT) -->
+  <g transform="translate(40, 187)">
+    <rect width="320" height="26" fill="#f0f7ff" rx="4"/>
+    <text x="10" y="18" font-family="monospace" font-size="13" fill="#333">video_10.srt</text>
+    <path d="M290 13 L300 21 L315 5" stroke="#28a745" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Group 2 Bracket -->
+  <path d="M20 168 L35 168 L35 200 L20 200" stroke="#0071e3" stroke-width="2" fill="none"/>
+  
+  <!-- Note -->
+  <text x="50" y="240" font-family="-apple-system, sans-serif" font-size="12" fill="#666" style="font-style: italic;">
+    All pairs must match by name
+  </text>
+  <text x="50" y="260" font-family="-apple-system, sans-serif" font-size="12" fill="#d9534f">
+    Folder should contain NOTHING else!
+  </text>
+</svg>

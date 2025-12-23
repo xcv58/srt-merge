@@ -86,6 +86,53 @@
             background: #e5f5ff;
             color: #0071e3;
         }
+
+        .instructions-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .instructions-text {
+            flex: 1;
+        }
+
+        .instructions-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .instructions-image img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .instructions-container {
+                flex-direction: column;
+            }
+        }
+
+        #preview-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        #preview-content {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 13px;
+            color: #333;
+        }
     </style>
 </head>
 
@@ -94,22 +141,37 @@
     <div class="container">
         <span class="badge">Run Locally • No Uploads</span>
         <h1>SRT Video Merger</h1>
-        <p>Select the folder containing your sequential .srt and .mov files. <br>Processing happens instantly in your
-            browser.</p>
+        <div class="instructions-container">
+            <div class="instructions-text">
+                <p>1. Select a folder containing <strong>only</strong> your sequential <code>.srt</code> and
+                    <code>.mov</code> files.
+                </p>
+                <p>2. Files must have <strong>identical names</strong> (excluding extension) to be paired correctly.</p>
+                <p style="font-size: 0.9em; color: #666;">Processing happens instantly in your browser.</p>
+            </div>
+            <div class="instructions-image">
+                <img src="folder_structure.svg" alt="Folder Structure Example">
+            </div>
+        </div>
 
         <div class="upload-area" onclick="document.getElementById('dirInput').click()">
             <strong>Click to Select Folder</strong>
-            <p>or drag folder here (Chrome/Edge)</p>
         </div>
 
         <input type="file" id="dirInput" webkitdirectory directory multiple style="display:none">
 
         <div id="log">Waiting for folder...</div>
         <button id="downloadBtn" onclick="downloadResult()">Download Merged SRT</button>
+
+        <div id="preview-container">
+            <h3>Merged SRT Preview</h3>
+            <div id="preview-content"></div>
+        </div>
     </div>
 
     <script>
         let mergedContent = "";
+        let mergedFileName = "merged_subtitles.srt";
         const logEl = document.getElementById('log');
 
         // Utility: Natural Sort (so 1, 2, 10 sorts correctly)
@@ -180,10 +242,43 @@
             });
         }
 
+        function getSmartFilename(firstFile, lastFile) {
+            const firstName = firstFile.name;
+            const lastName = lastFile.name;
+
+            // 1. Check Start Pattern: ^(\d+)
+            const startRegex = /^(\d+)/;
+            let match = firstName.match(startRegex);
+            if (match) {
+                const firstNum = match[1];
+                const lastMatch = lastName.match(startRegex);
+                const lastNum = lastMatch ? lastMatch[1] : '';
+                if (lastNum) {
+                    return firstName.replace(startRegex, `${firstNum}-${lastNum}`);
+                }
+            }
+
+            // 2. Check End Pattern: (\d+)(?:\.[^.]+)?$
+            const endRegex = /(\d+)(?:\.[^.]+)?$/;
+            match = firstName.match(endRegex);
+            if (match) {
+                const firstNum = match[1];
+                const lastMatch = lastName.match(endRegex);
+                const lastNum = lastMatch ? lastMatch[1] : '';
+                if (lastNum) {
+                    return firstName.replace(endRegex, (m, n) => m.replace(n, `${n}-${lastNum}`));
+                }
+            }
+
+            return "merged_subtitles.srt";
+        }
+
         // 5. Main Processing Logic
         async function processFiles(fileList) {
             logEl.textContent = "Analyzing files...\n";
             document.getElementById('downloadBtn').style.display = 'none';
+            document.getElementById('preview-container').style.display = 'none';
+            document.getElementById('preview-content').textContent = '';
 
             // Group files
             const pairs = {}; // { 1: {srt: File, mov: File}, 2: ... }
@@ -209,6 +304,10 @@
                 log("No matching SRT/MOV pairs found.");
                 return;
             }
+
+            // Generate Smart Filename
+            mergedFileName = getSmartFilename(sortedPairs[0].srt, sortedPairs[sortedPairs.length - 1].srt);
+            log(`Output Filename: ${mergedFileName}`);
 
             let cumulativeDuration = 0;
             let finalSrtContent = "";
@@ -263,6 +362,9 @@
             mergedContent = finalSrtContent;
             log("\nDONE! Ready to download.");
             document.getElementById('downloadBtn').style.display = 'inline-block';
+
+            document.getElementById('preview-content').textContent = mergedContent;
+            document.getElementById('preview-container').style.display = 'block';
         }
 
         function downloadResult() {
@@ -270,7 +372,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = "merged_subtitles.srt";
+            a.download = mergedFileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
