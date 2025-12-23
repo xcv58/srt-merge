@@ -1,0 +1,8 @@
+{
+    "name": "SRT Video Merger",
+    "short_name": "SRT Merger",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#0071e3"
+}
