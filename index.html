@@ -487,31 +487,84 @@
         }
 
         // 5. Main Processing Logic
+        // 5. Main Processing Logic
         async function processFiles(fileList) {
             document.getElementById('downloadBtn').style.display = 'none';
             document.getElementById('preview-container').style.display = 'none';
             document.getElementById('preview-content').textContent = '';
 
+            // Reset Log
+            logText.style.color = 'var(--text-secondary)';
+            logText.textContent = 'Analyzing files...';
+            spinner.style.display = 'inline-block';
+
+            const validExtensions = ['.srt', '.mov'];
+            const ignoredFiles = ['.ds_store']; // lowercase
+
+            const extraFiles = [];
             const pairs = {};
 
+            // 1. Initial Scan & Validation
             for (let f of fileList) {
-                if (f.name.startsWith('.')) continue;
+                const name = f.name;
+                const lowerName = name.toLowerCase();
 
-                const num = extractNumber(f.name);
-                if (num === null) continue;
+                // Check if file is in a subfolder (e.g. "Root/Sub/file.txt" has > 2 parts)
+                // We only want files in the root of the selection ("Root/file.txt")
+                if (f.webkitRelativePath && f.webkitRelativePath.split('/').length > 2) {
+                    continue;
+                }
+
+                // Skip hidden/system files
+                if (name.startsWith('.') || ignoredFiles.includes(lowerName)) continue;
+
+                // Check extension
+                const isSrt = lowerName.endsWith('.srt');
+                const isMov = lowerName.endsWith('.mov');
+
+                if (!isSrt && !isMov) {
+                    extraFiles.push(name);
+                    continue;
+                }
+
+                const num = extractNumber(name);
+                if (num === null) {
+                    extraFiles.push(name + " (no number found)");
+                    continue;
+                }
 
                 if (!pairs[num]) pairs[num] = { id: num };
 
-                if (f.name.toLowerCase().endsWith('.srt')) pairs[num].srt = f;
-                else if (f.name.toLowerCase().endsWith('.mov')) pairs[num].mov = f;
+                if (isSrt) {
+                    if (pairs[num].srt) extraFiles.push(name + " (duplicate ID)");
+                    else pairs[num].srt = f;
+                } else if (isMov) {
+                    if (pairs[num].mov) extraFiles.push(name + " (duplicate ID)");
+                    else pairs[num].mov = f;
+                }
             }
 
-            const sortedPairs = Object.values(pairs)
-                .filter(p => p.srt && p.mov)
-                .sort((a, b) => a.id - b.id);
+            // 2. Report Extra Files Error
+            if (extraFiles.length > 0) {
+                logError("Error: Folder contains unsupported or extra files:\n" + extraFiles.join("\n"));
+                return;
+            }
+
+            // 3. Check for Mismatched Pairs
+            const sortedPairs = Object.values(pairs).sort((a, b) => a.id - b.id);
+            const mismatched = sortedPairs.filter(p => !p.srt || !p.mov);
+
+            if (mismatched.length > 0) {
+                const details = mismatched.map(p => {
+                    const existing = p.srt ? p.srt.name : p.mov.name;
+                    return `ID ${p.id}: Found ${existing}, but missing counterpart.`;
+                }).join("\n");
+                logError("Error: Mismatched pairs found.\n" + details);
+                return;
+            }
 
             if (sortedPairs.length === 0) {
-                log("No matching SRT/MOV pairs found.", false);
+                logError("Error: No valid SRT/MOV pairs found.");
                 return;
             }
 
@@ -522,50 +575,62 @@
             let finalSrtContent = "";
             let globalIndex = 1;
 
-            for (let i = 0; i < sortedPairs.length; i++) {
-                const pair = sortedPairs[i];
-                // Updates log without spamming too much, just current status
+            try {
+                for (let i = 0; i < sortedPairs.length; i++) {
+                    const pair = sortedPairs[i];
 
-                if (i > 0) {
-                    const prevMov = sortedPairs[i - 1].mov;
-                    const duration = await getVideoDuration(prevMov);
-                    cumulativeDuration += duration;
-                }
-
-                const text = await pair.srt.text();
-
-                const shiftedText = text.replace(
-                    /(\d{2}:\d{2}:\d{2},\d{3}) -->(\d{ 2}: \d{ 2}: \d{ 2}, \d{ 3}) / g,
-                    (match, start, end) => {
-                        const newStart = msToTime(timeToMs(start) + cumulativeDuration);
-                        const newEnd = msToTime(timeToMs(end) + cumulativeDuration);
-                        return `${newStart} --> ${newEnd}`;
-                    }
-                );
-
-                const blocks = shiftedText.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').split('\n\n');
-
-                for (let block of blocks) {
-                    block = block.trim();
-                    if (!block) continue;
-
-                    const lines = block.split('\n');
-                    // Remove old index if present
-                    if (lines.length > 0 && /^\d+$/.test(lines[0].trim())) {
-                        lines.shift();
+                    if (i > 0) {
+                        const prevMov = sortedPairs[i - 1].mov;
+                        const duration = await getVideoDuration(prevMov);
+                        cumulativeDuration += duration;
                     }
 
-                    finalSrtContent += `${globalIndex}\n${lines.join('\n')}\n\n`;
-                    globalIndex++;
+                    const text = await pair.srt.text();
+
+                    // Regex corrected: (\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})
+                    const shiftedText = text.replace(
+                        /(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/g,
+                        (match, start, end) => {
+                            const newStart = msToTime(timeToMs(start) + cumulativeDuration);
+                            const newEnd = msToTime(timeToMs(end) + cumulativeDuration);
+                            return `${newStart} --> ${newEnd}`;
+                        }
+                    );
+
+                    const blocks = shiftedText.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').split('\n\n');
+
+                    for (let block of blocks) {
+                        block = block.trim();
+                        if (!block) continue;
+
+                        const lines = block.split('\n');
+                        // Remove old index if present
+                        if (lines.length > 0 && /^\d+$/.test(lines[0].trim())) {
+                            lines.shift();
+                        }
+
+                        finalSrtContent += `${globalIndex}\n${lines.join('\n')}\n\n`;
+                        globalIndex++;
+                    }
                 }
+
+                mergedContent = finalSrtContent;
+                log("Done! Ready to download.", false);
+                document.getElementById('downloadBtn').style.display = 'inline-block';
+
+                document.getElementById('preview-content').textContent = mergedContent;
+                document.getElementById('preview-container').style.display = 'block';
+
+            } catch (err) {
+                logError("Unexpected error during processing: " + err.message);
+                console.error(err);
             }
+        }
 
-            mergedContent = finalSrtContent;
-            log("Done! Ready to download.", false);
-            document.getElementById('downloadBtn').style.display = 'inline-block';
-
-            document.getElementById('preview-content').textContent = mergedContent;
-            document.getElementById('preview-container').style.display = 'block';
+        function logError(msg) {
+            logText.textContent = msg;
+            logText.style.color = '#d9534f'; // Red for error
+            spinner.style.display = 'none';
         }
 
         function downloadResult() {
