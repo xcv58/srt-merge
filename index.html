@@ -12,74 +12,227 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f5f5f7;
-            --container-bg: #ffffff;
-            --text-primary: #1d1d1f;
-            --text-secondary: #86868b;
-            --accent-color: #0071e3;
-            --accent-hover: #0077ed;
-            --border-color: #d2d2d7;
-            --code-bg: #f5f5f7;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --bg-color: #eff3f9;
+            --container-bg: rgba(255, 255, 255, 0.94);
+            --text-primary: #171b26;
+            --text-secondary: #657082;
+            --accent-color: #0068d6;
+            --accent-hover: #0052aa;
+            --accent-soft: rgba(0, 104, 214, 0.1);
+            --success-color: #19734f;
+            --success-soft: rgba(25, 115, 79, 0.11);
+            --warning-color: #916100;
+            --warning-soft: rgba(145, 97, 0, 0.12);
+            --error-color: #c53929;
+            --error-soft: rgba(197, 57, 41, 0.12);
+            --border-color: #d7dee9;
+            --code-bg: #f6f8fc;
+            --shadow: 0 28px 60px rgba(20, 34, 62, 0.08);
+            --page-glow: radial-gradient(circle at top left, rgba(0, 104, 214, 0.12), transparent 38%);
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #000000;
-                --container-bg: #1c1c1e;
-                --text-primary: #f5f5f7;
-                --text-secondary: #86868b;
-                --accent-color: #2997ff;
-                --accent-hover: #0071e3;
-                --border-color: #424245;
-                --code-bg: #2c2c2e;
-                --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+                --bg-color: #0e1118;
+                --container-bg: rgba(25, 28, 38, 0.94);
+                --text-primary: #f2f5fb;
+                --text-secondary: #9aa3b4;
+                --accent-color: #55a3ff;
+                --accent-hover: #7cb8ff;
+                --accent-soft: rgba(85, 163, 255, 0.12);
+                --success-color: #69d59f;
+                --success-soft: rgba(105, 213, 159, 0.12);
+                --warning-color: #f0bf62;
+                --warning-soft: rgba(240, 191, 98, 0.14);
+                --error-color: #ff8b7f;
+                --error-soft: rgba(255, 139, 127, 0.12);
+                --border-color: #343b4c;
+                --code-bg: #171b26;
+                --shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+                --page-glow: radial-gradient(circle at top left, rgba(85, 163, 255, 0.14), transparent 42%);
             }
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            max-width: 900px;
+            max-width: 980px;
             margin: 0 auto;
-            padding: 40px 20px;
-            background: var(--bg-color);
+            padding: clamp(24px, 5vw, 52px) 20px 64px;
+            background: var(--page-glow), var(--bg-color);
             color: var(--text-primary);
             line-height: 1.5;
             transition: background 0.3s, color 0.3s;
         }
 
         .container {
+            position: relative;
+            overflow: hidden;
             background: var(--container-bg);
-            padding: 40px;
-            border-radius: 18px;
+            padding: clamp(24px, 4vw, 40px);
+            border-radius: 24px;
             box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(16px);
         }
 
         h1 {
-            margin-top: 0;
+            margin: 0;
             font-weight: 600;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+        }
+
+        .lede {
+            margin: 12px 0 0;
+            max-width: 42rem;
+            font-size: 1.02rem;
+            color: var(--text-secondary);
         }
 
         .badge {
             display: inline-block;
             padding: 6px 12px;
-            border-radius: 20px;
+            border-radius: 999px;
             font-size: 12px;
             font-weight: 600;
-            margin-bottom: 16px;
-            background: rgba(0, 113, 227, 0.1);
+            margin-bottom: 18px;
+            background: var(--accent-soft);
             color: var(--accent-color);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .language-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px;
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--container-bg) 60%, var(--code-bg));
+            border: 1px solid var(--border-color);
+        }
+
+        .language-button {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+
+        .language-button:hover {
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .language-button.is-active {
+            background: var(--accent-color);
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(0, 104, 214, 0.18);
+        }
+
+        .journey {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .journey-step {
+            display: grid;
+            gap: 4px;
+            padding: 16px 18px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: color-mix(in srgb, var(--container-bg) 55%, var(--code-bg));
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        }
+
+        .journey-step-label {
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .journey-step strong {
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .journey-step span {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+        }
+
+        .journey-step.is-current {
+            border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
+            background: color-mix(in srgb, var(--accent-soft) 45%, var(--code-bg));
+            transform: translateY(-1px);
+        }
+
+        .journey-step.is-complete {
+            border-color: color-mix(in srgb, var(--success-color) 40%, var(--border-color));
+            background: color-mix(in srgb, var(--success-soft) 45%, var(--code-bg));
+        }
+
+        .journey-step.is-error {
+            border-color: color-mix(in srgb, var(--error-color) 45%, var(--border-color));
+            background: color-mix(in srgb, var(--error-soft) 45%, var(--code-bg));
+        }
+
+        .quick-help {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .quick-help-card {
+            padding: 16px 18px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: color-mix(in srgb, var(--container-bg) 60%, var(--code-bg));
+        }
+
+        .quick-help-card strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .quick-help-card ul {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--text-secondary);
+        }
+
+        .quick-help-card li + li {
+            margin-top: 6px;
         }
 
         .instructions-container {
             display: flex;
             align-items: center;
-            gap: 40px;
-            margin: 30px 0;
-            padding: 20px;
-            background: var(--bg-color);
-            border-radius: 12px;
+            gap: clamp(20px, 4vw, 40px);
+            margin: 32px 0 0;
+            padding: 24px;
+            background: color-mix(in srgb, var(--container-bg) 55%, var(--code-bg));
+            border-radius: 18px;
             border: 1px solid var(--border-color);
         }
 
@@ -88,22 +241,52 @@
         }
 
         .instructions-text p {
-            margin: 12px 0;
+            margin: 0;
             color: var(--text-primary);
+        }
+
+        .instruction-points {
+            display: grid;
+            gap: 14px;
+        }
+
+        .instructions-note {
+            color: var(--text-secondary);
+            font-size: 0.96rem;
         }
 
         .instructions-text code {
             background: rgba(0, 0, 0, 0.05);
             padding: 2px 6px;
-            border-radius: 4px;
+            border-radius: 6px;
             font-family: monospace;
             font-size: 0.9em;
         }
 
         @media (prefers-color-scheme: dark) {
             .instructions-text code {
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.09);
             }
+        }
+
+        .tip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .tip-chip,
+        .upload-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            font-size: 0.88rem;
+            color: var(--text-secondary);
         }
 
         .instructions-image {
@@ -114,90 +297,278 @@
         .instructions-image svg {
             max-width: 100%;
             height: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
         }
 
         .upload-area {
             border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 60px 20px;
+            border-radius: 20px;
+            padding: 36px 24px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--bg-color);
-            margin-top: 30px;
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            background: linear-gradient(180deg, color-mix(in srgb, var(--container-bg) 60%, var(--code-bg)), var(--code-bg));
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            outline: none;
         }
 
-        .upload-area:hover {
+        .upload-area:hover,
+        .upload-area:focus-visible,
+        .upload-area.is-active {
             border-color: var(--accent-color);
-            background: rgba(0, 113, 227, 0.05);
-            transform: scale(1.01);
+            background: linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 68%, var(--container-bg)), color-mix(in srgb, var(--accent-soft) 35%, var(--code-bg)));
+            transform: translateY(-2px);
+            box-shadow: 0 16px 30px rgba(0, 104, 214, 0.08);
+        }
+
+        .upload-area.is-ready {
+            border-style: solid;
+        }
+
+        .upload-icon {
+            width: 68px;
+            height: 68px;
+            display: grid;
+            place-items: center;
+            border-radius: 20px;
+            font-size: 2rem;
+            background: color-mix(in srgb, var(--accent-soft) 70%, var(--container-bg));
         }
 
         .upload-area strong {
-            font-size: 1.2em;
-            color: var(--accent-color);
+            font-size: 1.28rem;
+            color: var(--text-primary);
         }
 
-        #log {
-            margin-top: 25px;
-            padding: 20px;
-            background: var(--code-bg);
-            border-radius: 8px;
-            font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
-            white-space: pre-wrap;
-            height: 200px;
-            overflow-y: auto;
-            font-size: 13px;
-            border: 1px solid var(--border-color);
+        .upload-area p {
+            margin: 0;
             color: var(--text-secondary);
         }
 
-        button {
+        .upload-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: var(--accent-color);
+            color: #fff;
+            font-weight: 600;
+            margin-top: 2px;
+            box-shadow: 0 10px 22px rgba(0, 104, 214, 0.2);
+        }
+
+        .upload-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .selection-summary {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            background: var(--code-bg);
+            color: var(--text-secondary);
+            display: grid;
+            gap: 4px;
+        }
+
+        .selection-summary strong {
+            color: var(--text-primary);
+        }
+
+        .selection-summary-list {
+            margin: 4px 0 2px;
+            padding-left: 18px;
+            color: var(--text-primary);
+            display: grid;
+            gap: 6px;
+        }
+
+        .selection-summary-list li {
+            line-height: 1.4;
+        }
+
+        .selection-summary.is-info {
+            background: color-mix(in srgb, var(--accent-soft) 45%, var(--code-bg));
+            border-color: color-mix(in srgb, var(--accent-color) 28%, var(--border-color));
+        }
+
+        .selection-summary.is-success {
+            background: color-mix(in srgb, var(--success-soft) 55%, var(--code-bg));
+            border-color: color-mix(in srgb, var(--success-color) 32%, var(--border-color));
+        }
+
+        .selection-summary.is-warning {
+            background: color-mix(in srgb, var(--warning-soft) 60%, var(--code-bg));
+            border-color: color-mix(in srgb, var(--warning-color) 35%, var(--border-color));
+        }
+
+        .selection-summary.is-error {
+            background: color-mix(in srgb, var(--error-soft) 62%, var(--code-bg));
+            border-color: color-mix(in srgb, var(--error-color) 36%, var(--border-color));
+        }
+
+        .log-panel {
+            margin-top: 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            background: color-mix(in srgb, var(--container-bg) 65%, var(--code-bg));
+            overflow: hidden;
+        }
+
+        .log-panel summary {
+            cursor: pointer;
+            padding: 14px 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            list-style: none;
+        }
+
+        .log-panel summary::-webkit-details-marker {
+            display: none;
+        }
+
+        html[data-lang="en"] .log-panel summary::after {
+            content: 'Show details';
+        }
+
+        html[data-lang="zh"] .log-panel summary::after {
+            content: '展开详情';
+        }
+
+        .log-panel summary::after {
+            float: right;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        html[data-lang="en"] .log-panel[open] summary::after {
+            content: 'Hide details';
+        }
+
+        html[data-lang="zh"] .log-panel[open] summary::after {
+            content: '收起详情';
+        }
+
+        .log-panel summary + * {
+            border-top: 1px solid var(--border-color);
+        }
+
+        #log {
+            padding: 18px 20px;
+            background: var(--code-bg);
+            font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+            white-space: pre-wrap;
+            min-height: 150px;
+            max-height: 240px;
+            overflow-y: auto;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .primary-button {
             background: var(--accent-color);
             color: white;
             border: none;
             padding: 14px 28px;
-            border-radius: 980px;
+            border-radius: 999px;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            display: none;
-            margin-top: 25px;
-            transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 24px;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 12px 24px rgba(0, 104, 214, 0.18);
         }
 
-        button:hover {
+        .primary-button:hover {
             background: var(--accent-hover);
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 16px 28px rgba(0, 104, 214, 0.22);
         }
 
-        button:active {
+        .primary-button:active {
             transform: translateY(0);
         }
 
-        #preview-container {
-            margin-top: 40px;
+        #downloadBtn {
             display: none;
+        }
+
+        #preview-container {
+            margin-top: 36px;
+            display: none;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .preview-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            letter-spacing: 0.01em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .preview-meta {
+            margin: 6px 0 0;
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .secondary-button {
+            border: 1px solid var(--border-color);
+            background: color-mix(in srgb, var(--container-bg) 70%, var(--code-bg));
+            color: var(--text-primary);
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+        }
+
+        .secondary-button:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-1px);
+            background: color-mix(in srgb, var(--accent-soft) 30%, var(--container-bg));
         }
 
         #preview-content {
             background: var(--code-bg);
             border: 1px solid var(--border-color);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 14px;
             font-family: monospace;
             white-space: pre-wrap;
+            margin: 0;
             max-height: 400px;
             overflow-y: auto;
             font-size: 13px;
             color: var(--text-primary);
         }
 
-        /* Loading Spinner */
         .spinner {
             border: 3px solid rgba(0, 0, 0, 0.1);
             width: 20px;
@@ -226,14 +597,31 @@
                 padding: 20px;
             }
 
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .journey,
+            .quick-help {
+                grid-template-columns: 1fr;
+            }
+
             .instructions-container {
                 flex-direction: column-reverse;
                 gap: 20px;
-                text-align: center;
             }
 
             .upload-area {
                 padding: 40px 20px;
+            }
+
+            .selection-summary {
+                padding: 14px;
+            }
+
+            .preview-header {
+                flex-direction: column;
             }
         }
     </style>
@@ -242,17 +630,68 @@
 <body>
 
     <div class="container">
-        <span class="badge">Run Locally • No Uploads</span>
-        <h1>SRT Video Merger</h1>
+        <div class="topbar">
+            <span class="badge" data-i18n="badge">Run Locally • No Uploads</span>
+            <div class="language-switch" role="group" data-i18n-aria-label="languageSwitchLabel" aria-label="Language">
+                <button class="language-button" id="langEnBtn" type="button" data-lang="en" aria-pressed="false">EN</button>
+                <button class="language-button" id="langZhBtn" type="button" data-lang="zh" aria-pressed="false">中文</button>
+            </div>
+        </div>
+        <h1 data-i18n="pageTitle">SRT Media Merger</h1>
+        <p class="lede" data-i18n-html="lede">Drop one folder of clips and matching subtitle files, confirm the scan looks right, then
+            download one merged <code>.srt</code>. Everything stays in your browser.
+        </p>
+        <div class="journey" id="journeySteps" data-i18n-aria-label="workflowAria" aria-label="Workflow steps">
+            <div class="journey-step is-current" data-step="1">
+                <span class="journey-step-label" data-i18n="step1Label">Step 1</span>
+                <strong data-i18n="step1Title">Choose one folder</strong>
+                <span data-i18n="step1Desc">Drag it from Finder or select it manually.</span>
+            </div>
+            <div class="journey-step" data-step="2">
+                <span class="journey-step-label" data-i18n="step2Label">Step 2</span>
+                <strong data-i18n="step2Title">Check matched pairs</strong>
+                <span data-i18n="step2Desc">The app scans names, order, and missing files.</span>
+            </div>
+            <div class="journey-step" data-step="3">
+                <span class="journey-step-label" data-i18n="step3Label">Step 3</span>
+                <strong data-i18n="step3Title">Download the merged file</strong>
+                <span data-i18n="step3Desc">Review the preview if you want, then save the result.</span>
+            </div>
+        </div>
+        <div class="quick-help" data-i18n-aria-label="quickHelpAria" aria-label="Quick help">
+            <div class="quick-help-card">
+                <strong data-i18n="quickHelpSetupTitle">Best folder setup</strong>
+                <ul>
+                    <li data-i18n="quickHelpSetupLine1">One subtitle file and one media file per clip</li>
+                    <li data-i18n-html="quickHelpSetupLine2">Matching names like <code>clip_01.srt</code> and <code>clip_01.mov</code></li>
+                    <li data-i18n="quickHelpSetupLine3">Visible numbering so the merge order is obvious</li>
+                </ul>
+            </div>
+            <div class="quick-help-card">
+                <strong data-i18n="quickHelpFixTitle">If the scan stops</strong>
+                <ul>
+                    <li data-i18n="quickHelpFixLine1">Look for missing media or subtitle counterparts</li>
+                    <li data-i18n="quickHelpFixLine2">Rename files so each pair shares the same base name</li>
+                    <li data-i18n="quickHelpFixLine3">Drop the folder that directly contains the files, not a higher parent folder</li>
+                </ul>
+            </div>
+        </div>
 
         <div class="instructions-container">
             <div class="instructions-text">
-                <p>1. Select a folder containing <strong>only</strong> your sequential <code>.srt</code> and
-                    <code>.mov</code> files.
-                </p>
-                <p>2. Files must have <strong>identical names</strong> (excluding extension) to be paired correctly.</p>
-                <p style="font-size: 0.9em; color: var(--text-secondary);">Processing happens instantly in your browser.
-                </p>
+                <div class="instruction-points">
+                    <p data-i18n-html="instruction1"><strong>Use one folder for one export.</strong> Match each subtitle to a media file with the same
+                        base name, such as <code>video_01.srt</code> + <code>video_01.mov</code> or <code>audio_01.srt</code> + <code>audio_01.mp3</code>.</p>
+                    <p data-i18n-html="instruction2"><strong>Keep a visible number in each filename.</strong> The app merges pairs in numeric order
+                        and shifts each subtitle by the previous clip's duration.</p>
+                    <p class="instructions-note" data-i18n="instruction3">Extra unrelated files are ignored. Files inside nested subfolders are
+                        skipped so you can drop a real-world folder without cleaning it first.</p>
+                </div>
+                <div class="tip-list">
+                    <span class="tip-chip" data-i18n="tip1">Drag the whole folder</span>
+                    <span class="tip-chip" data-i18n="tip2">MOV, MP4, M4V, or MP3 source</span>
+                    <span class="tip-chip" data-i18n="tip3">Works offline</span>
+                </div>
             </div>
             <div class="instructions-image">
                 <!-- Embedded SVG for Offline Capability -->
@@ -260,7 +699,7 @@
                     style="background: transparent;">
                     <rect width="400" height="300" fill="#f5f5f7" rx="12" ry="12" style="fill: var(--code-bg);" />
                     <text x="20" y="30" font-family="-apple-system, sans-serif" font-size="14" font-weight="bold"
-                        fill="#333" style="fill: var(--text-primary);">Correct Folder Structure Example:</text>
+                        fill="#333" style="fill: var(--text-primary);" data-i18n="svgTitle">Correct Folder Structure Example:</text>
                     <rect x="20" y="45" width="360" height="235" fill="white" stroke="#e0e0e0" rx="8" ry="8"
                         style="fill: var(--container-bg); stroke: var(--border-color);" />
                     <g transform="translate(40, 60)">
@@ -293,34 +732,57 @@
                     <path d="M20 168 L35 168 L35 200 L20 200" stroke="#0071e3" stroke-width="2" fill="none"
                         style="stroke: var(--accent-color);" />
                     <text x="50" y="240" font-family="-apple-system, sans-serif" font-size="12" fill="#666"
-                        style="font-style: italic; fill: var(--text-secondary);">
+                        style="font-style: italic; fill: var(--text-secondary);" data-i18n="svgNote1">
                         All pairs must match by name
                     </text>
-                    <text x="50" y="260" font-family="-apple-system, sans-serif" font-size="12" fill="#d9534f">
-                        Folder should contain NOTHING else!
+                    <text x="50" y="260" font-family="-apple-system, sans-serif" font-size="12" fill="#666"
+                        style="fill: var(--text-secondary);" data-i18n="svgNote2">
+                        Extra files are ignored
                     </text>
                 </svg>
             </div>
         </div>
 
-        <div class="upload-area" onclick="document.getElementById('dirInput').click()">
-            <div style="font-size: 2em; margin-bottom: 10px;">📂</div>
-            <strong>Click here to Select Folder</strong>
-            <p style="color: var(--text-secondary);">or drag and drop folder here</p>
+        <div class="upload-area" id="dropArea" role="button" tabindex="0" aria-describedby="uploadHelp">
+            <div class="upload-icon" aria-hidden="true">📂</div>
+            <strong data-i18n="uploadTitle">Drop a folder or matching files here</strong>
+            <p id="uploadHelp" data-i18n="uploadHelp">or click to choose a folder from Finder</p>
+            <span class="upload-cta" data-i18n="uploadCta">Choose folder from Finder</span>
+            <div class="upload-meta">
+                <span class="upload-pill" data-i18n="uploadMeta1">Folder or multi-file drag-and-drop supported</span>
+                <span class="upload-pill" data-i18n="uploadMeta2">Nothing gets uploaded</span>
+            </div>
         </div>
 
         <input type="file" id="dirInput" webkitdirectory directory multiple style="display:none">
 
-        <div id="log">
-            <span class="spinner" id="spinner"></span>
-            <span id="log-text">Waiting for input...</span>
+        <div class="selection-summary" id="selectionSummary" aria-live="polite">
+            <strong>No folder selected yet.</strong>
+            <span>Drop a folder or matching files to scan them here, or use Choose folder from Finder.</span>
+            <span>After the scan, this box will tell you what to fix or what to download next.</span>
         </div>
 
-        <button id="downloadBtn" onclick="downloadResult()">Download Merged SRT</button>
+        <details class="log-panel" id="logPanel">
+            <summary data-i18n="logPanelSummary">Troubleshooting and processing details</summary>
+            <div id="log" aria-live="polite">
+                <span class="spinner" id="spinner"></span>
+                <span id="log-text">Waiting for input...</span>
+            </div>
+        </details>
+
+        <button id="downloadBtn" class="primary-button" onclick="downloadResult()">Download Merged SRT</button>
 
         <div id="preview-container">
-            <h3>Merged SRT Preview</h3>
-            <div id="preview-content"></div>
+            <div class="preview-header">
+                <div>
+                    <h3 data-i18n="previewTitle">Merged SRT Preview</h3>
+                    <p class="preview-meta" id="previewMeta">The merged subtitle text will appear here after processing.</p>
+                </div>
+                <div class="preview-actions">
+                    <button id="copyPreviewBtn" class="secondary-button" type="button">Copy text</button>
+                </div>
+            </div>
+            <pre id="preview-content" data-i18n-aria-label="previewAria" aria-label="Merged SRT preview"></pre>
         </div>
     </div>
 
@@ -336,79 +798,868 @@
 
         let mergedContent = "";
         let mergedFileName = "merged_subtitles.srt";
+        let dragDepth = 0;
+
+        const dirInput = document.getElementById('dirInput');
+        const dropArea = document.getElementById('dropArea');
+        const selectionSummary = document.getElementById('selectionSummary');
+        const logPanel = document.getElementById('logPanel');
         const logText = document.getElementById('log-text');
         const spinner = document.getElementById('spinner');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const previewContainer = document.getElementById('preview-container');
+        const previewContent = document.getElementById('preview-content');
+        const previewMeta = document.getElementById('previewMeta');
+        const copyPreviewBtn = document.getElementById('copyPreviewBtn');
+        const journeySteps = Array.from(document.querySelectorAll('.journey-step'));
+        const langButtons = Array.from(document.querySelectorAll('.language-button'));
 
-        // Utility: Natural Sort
+        const supportedMediaExtensions = new Set(['.mov', '.mp4', '.m4v', '.mp3']);
+        const ignoredFileNames = new Set(['.ds_store']);
         const naturalSort = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
+        const storedLanguage = window.localStorage.getItem('srt-merge-language');
+        const defaultLanguage = navigator.language && navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+        let currentLanguage = storedLanguage === 'zh' || storedLanguage === 'en' ? storedLanguage : defaultLanguage;
 
-        function log(msg, isLoading = false) {
-            logText.textContent = msg;
-            if (isLoading) {
-                spinner.style.display = 'inline-block';
-            } else {
-                spinner.style.display = 'none';
+        const translations = {
+            en: {
+                pageTitle: 'SRT Media Merger',
+                languageSwitchLabel: 'Language',
+                badge: 'Run Locally • No Uploads',
+                lede: 'Drop one folder of clips and matching subtitle files, confirm the scan looks right, then download one merged <code>.srt</code>. Everything stays in your browser.',
+                workflowAria: 'Workflow steps',
+                quickHelpAria: 'Quick help',
+                step1Label: 'Step 1',
+                step1Title: 'Choose one folder',
+                step1Desc: 'Drag it from Finder or select it manually.',
+                step2Label: 'Step 2',
+                step2Title: 'Check matched pairs',
+                step2Desc: 'The app scans names, order, and missing files.',
+                step3Label: 'Step 3',
+                step3Title: 'Download the merged file',
+                step3Desc: 'Review the preview if you want, then save the result.',
+                quickHelpSetupTitle: 'Best folder setup',
+                quickHelpSetupLine1: 'One subtitle file and one media file per clip',
+                quickHelpSetupLine2: 'Matching names like <code>clip_01.srt</code> and <code>clip_01.mov</code>',
+                quickHelpSetupLine3: 'Visible numbering so the merge order is obvious',
+                quickHelpFixTitle: 'If the scan stops',
+                quickHelpFixLine1: 'Look for missing media or subtitle counterparts',
+                quickHelpFixLine2: 'Rename files so each pair shares the same base name',
+                quickHelpFixLine3: 'Drop the folder that directly contains the files, not a higher parent folder',
+                instruction1: '<strong>Use one folder for one export.</strong> Match each subtitle to a media file with the same base name, such as <code>video_01.srt</code> + <code>video_01.mov</code> or <code>audio_01.srt</code> + <code>audio_01.mp3</code>.',
+                instruction2: '<strong>Keep a visible number in each filename.</strong> The app merges pairs in numeric order and shifts each subtitle by the previous clip\'s duration.',
+                instruction3: 'Extra unrelated files are ignored. Files inside nested subfolders are skipped so you can drop a real-world folder without cleaning it first.',
+                tip1: 'Drag the whole folder',
+                tip2: 'MOV, MP4, M4V, or MP3 source',
+                tip3: 'Works offline',
+                svgTitle: 'Correct Folder Structure Example:',
+                svgNote1: 'All pairs must match by name',
+                svgNote2: 'Extra files are ignored',
+                uploadTitle: 'Drop a folder or matching files here',
+                uploadHelp: 'or click to choose a folder from Finder',
+                uploadCta: 'Choose folder from Finder',
+                uploadMeta1: 'Folder or multi-file drag-and-drop supported',
+                uploadMeta2: 'Nothing gets uploaded',
+                logPanelSummary: 'Troubleshooting and processing details',
+                previewTitle: 'Merged SRT Preview',
+                previewAria: 'Merged SRT preview',
+                waitingForInput: 'Waiting for input...',
+                summaryIdleTitle: 'No folder selected yet.',
+                summaryIdleLine1: 'Drop a folder or matching files to scan them here, or use Choose folder from Finder.',
+                summaryIdleLine2: 'After the scan, this box will tell you what to fix or what to download next.',
+                summarySelectedFilesLabel: 'Selected files',
+                summarySelectionLine1: '{{sourceVerb}} {{countLabel}}. Checking for matching subtitle and media pairs now.',
+                summarySelectionLine2: 'Next: if anything is missing, you will see exactly what to rename or add.',
+                summaryNoUsableTitle: 'Nothing usable was found.',
+                summaryNoUsableLine1: 'Try dropping the folder itself, not a shortcut or alias.',
+                summaryNoUsableLine2: 'Use Choose folder from Finder if drag-and-drop gives you a shortcut instead of the real folder.',
+                summaryMultipleFoldersTitle: 'Multiple folders were dropped.',
+                summaryMultipleFoldersLine2: 'Drop one folder only so the scan order stays predictable.',
+                summaryMissingNumbersTitle: 'Some files are missing an order number.',
+                summaryMissingNumbersLine2: 'Add a visible number like 01, 02, or 10 so the merge order is unambiguous.',
+                summaryDuplicatesTitle: 'Duplicate subtitle or media files were found.',
+                summaryDuplicatesLine2: 'Keep one subtitle file and one media file for each clip name.',
+                summaryIncompleteTitle: 'Some pairs are incomplete.',
+                summaryIncompleteLine2: 'Each clip needs both a subtitle file and a media file with the same base name.',
+                summaryNoValidPairsTitle: 'No valid pairs found.',
+                summaryNoValidPairsLine2: 'Accepted source formats: MOV, MP4, M4V, and MP3.',
+                summaryAmbiguousNumbersTitle: 'The numbering is ambiguous.',
+                summaryAmbiguousNumbersLine2: 'Use each number once so the app knows the correct order.',
+                summaryReadyLine1: '{{countLabel}} found.',
+                summaryReadyLine2: 'Ready to merge and download.',
+                summaryReadyLine3: 'Detected pairs: {{pairs}}',
+                summaryReadyLine4: 'Next: download {{fileName}} or skim the preview below first.',
+                summaryFolderDropFailedTitle: 'Folder drop failed.',
+                summaryFolderDropFailedLine1: 'Use Choose folder from Finder if your browser does not expose folders to drag-and-drop.',
+                summaryProcessingStoppedTitle: 'Processing stopped.',
+                summaryProcessingStoppedLine2: 'Open the details panel above for the last processed file.',
+                downloadDefault: 'Download Merged SRT',
+                downloadReady: 'Download {{fileName}}',
+                previewPlaceholder: 'The merged subtitle text will appear here after processing.',
+                previewReady: '{{fileName}} • {{blockLabel}} • {{charCount}} characters',
+                copyText: 'Copy text',
+                copyCopied: 'Copied',
+                copyManual: 'Press Cmd/Ctrl+C',
+                verbDropped: 'Dropped',
+                verbSelected: 'Selected',
+                detailMissingSubtitle: '{{stem}}: missing subtitle file',
+                detailMissingMedia: '{{stem}}: missing media file',
+                detailDuplicateSubtitle: '{{name}} (duplicate subtitle for {{stem}})',
+                detailDuplicateMedia: '{{name}} (duplicate media file for {{stem}})',
+                warningIgnoredUnsupported: '{{countLabel}} ignored',
+                warningIgnoredNested: '{{countLabel}} skipped from nested folders',
+                warningNumberingJumps: 'numbering jumps {{ranges}}',
+                durationReadError: 'Unable to read the media duration of {{fileName}}.',
+                logReadingDroppedFolder: 'Reading dropped folder...',
+                logScanningSelection: '{{sourceVerb}} {{countLabel}}. Scanning folder...',
+                logAnalyzingFiles: 'Analyzing files...',
+                logFoundPairs: 'Found {{countLabel}}. Output: {{fileName}}',
+                logDone: 'Done. {{countLabel}} merged and ready to download.',
+                logReviewNotes: 'Review notes above before download if needed.',
+                logPairProgress: 'Pair {{current}}/{{total}}: {{stem}}',
+                logClipboardWriteFailed: 'Clipboard write failed: {{message}}',
+                logNoReadableFiles: 'No readable files were found.',
+                logMultipleFolders: 'Please drop one folder at a time.\nFound: {{folders}}',
+                logFolderDropFailed: 'Could not read the dropped folder.\n{{message}}',
+                logMissingNumbersIntro: 'These files need a number in the filename so they can be ordered:',
+                logDuplicatesIntro: 'Multiple files are trying to use the same pair:',
+                logIncompleteIntro: 'Matching files are incomplete:',
+                logNoValidPairsIntro: 'No valid subtitle/media pairs were found.',
+                logRepeatedNumbersIntro: 'Sequence numbers must be unique. These numbers are repeated:',
+                logUnexpectedError: 'Unexpected error during processing:\n{{message}}',
+                logNotesPrefix: 'Notes: {{notes}}',
+                helperNestedOnly: 'The dropped folder seems to contain only nested folders. Drop the folder that directly contains the numbered files.',
+                helperNoPairs: 'Add numbered .srt files plus matching .mov, .mp4, .m4v, or .mp3 files, then try again.'
+            },
+            zh: {
+                pageTitle: 'SRT 字幕合并',
+                languageSwitchLabel: '语言',
+                badge: '本地运行 • 不上传',
+                lede: '拖入一个包含媒体片段和对应字幕的文件夹，确认扫描结果无误后，再下载一个合并后的 <code>.srt</code> 文件。所有处理都在浏览器本地完成。',
+                workflowAria: '操作步骤',
+                quickHelpAria: '快速说明',
+                step1Label: '第 1 步',
+                step1Title: '选择一个文件夹',
+                step1Desc: '可以直接从 Finder 拖入，也可以手动选择。',
+                step2Label: '第 2 步',
+                step2Title: '检查匹配结果',
+                step2Desc: '应用会检查文件名、顺序和缺失项。',
+                step3Label: '第 3 步',
+                step3Title: '下载合并后的文件',
+                step3Desc: '如有需要可先看预览，再保存结果。',
+                quickHelpSetupTitle: '推荐的文件夹结构',
+                quickHelpSetupLine1: '每个片段都包含一个字幕文件和一个媒体文件',
+                quickHelpSetupLine2: '文件名需要成对对应，例如 <code>clip_01.srt</code> 和 <code>clip_01.mov</code>',
+                quickHelpSetupLine3: '文件名里要有明显的编号，方便确定合并顺序',
+                quickHelpFixTitle: '如果扫描中断',
+                quickHelpFixLine1: '先检查是否缺少对应的媒体文件或字幕文件',
+                quickHelpFixLine2: '把每一对文件改成相同的基础文件名',
+                quickHelpFixLine3: '请拖入直接包含这些文件的文件夹，而不是更高一级的父文件夹',
+                instruction1: '<strong>一次只处理一个文件夹。</strong> 每个字幕文件都要和同名的媒体文件配对，例如 <code>video_01.srt</code> + <code>video_01.mov</code>，或 <code>audio_01.srt</code> + <code>audio_01.mp3</code>。',
+                instruction2: '<strong>文件名里要有清晰的编号。</strong> 应用会按编号顺序合并，并根据前一个媒体片段的时长平移后续字幕时间。',
+                instruction3: '其他无关文件会被忽略。嵌套子文件夹中的文件也会跳过，所以不必为了导入而专门清理文件夹。',
+                tip1: '可直接拖入整个文件夹',
+                tip2: '支持 MOV、MP4、M4V 和 MP3',
+                tip3: '离线也能使用',
+                svgTitle: '正确的文件夹结构示例：',
+                svgNote1: '每一对文件都必须同名',
+                svgNote2: '其他无关文件会被忽略',
+                uploadTitle: '把文件夹或配对文件拖到这里',
+                uploadHelp: '或点击从 Finder 中选择文件夹',
+                uploadCta: '从 Finder 选择文件夹',
+                uploadMeta1: '支持拖放整个文件夹或多个文件',
+                uploadMeta2: '不会上传任何文件',
+                logPanelSummary: '故障排查与处理详情',
+                previewTitle: '合并后的 SRT 预览',
+                previewAria: '合并后的 SRT 预览',
+                waitingForInput: '等待输入...',
+                summaryIdleTitle: '还没有选择文件夹。',
+                summaryIdleLine1: '把文件夹或配对文件拖到这里扫描，或点击“从 Finder 选择文件夹”。',
+                summaryIdleLine2: '扫描完成后，这里会告诉你下一步该修什么，或者可以直接下载什么。',
+                summarySelectedFilesLabel: '已选择的文件',
+                summarySelectionLine1: '{{sourceVerb}}{{countLabel}}，正在检查字幕和媒体文件是否能正确配对。',
+                summarySelectionLine2: '下一步：如果有缺失或命名问题，这里会直接告诉你该改什么。',
+                summaryNoUsableTitle: '没有找到可用内容。',
+                summaryNoUsableLine1: '请确认你拖入的是实际文件夹，而不是快捷方式或别名。',
+                summaryNoUsableLine2: '如果拖放得到的是快捷方式，请改用“从 Finder 选择文件夹”。',
+                summaryMultipleFoldersTitle: '一次拖入了多个文件夹。',
+                summaryMultipleFoldersLine2: '请一次只拖入一个文件夹，这样顺序才不会混乱。',
+                summaryMissingNumbersTitle: '有些文件名里没有顺序编号。',
+                summaryMissingNumbersLine2: '请在文件名中加入 01、02、10 这类明显编号，避免顺序不明确。',
+                summaryDuplicatesTitle: '发现重复的字幕文件或媒体文件。',
+                summaryDuplicatesLine2: '每个片段只保留一个字幕文件和一个媒体文件。',
+                summaryIncompleteTitle: '有些配对不完整。',
+                summaryIncompleteLine2: '每个片段都需要同名的字幕文件和媒体文件。',
+                summaryNoValidPairsTitle: '没有找到有效配对。',
+                summaryNoValidPairsLine2: '支持的源文件格式：MOV、MP4、M4V、MP3。',
+                summaryAmbiguousNumbersTitle: '编号存在歧义。',
+                summaryAmbiguousNumbersLine2: '每个编号只使用一次，这样应用才能判断正确顺序。',
+                summaryReadyLine1: '找到 {{countLabel}}。',
+                summaryReadyLine2: '可以直接合并并下载。',
+                summaryReadyLine3: '识别到的配对：{{pairs}}',
+                summaryReadyLine4: '下一步：下载 {{fileName}}，或先查看下方预览。',
+                summaryFolderDropFailedTitle: '拖放文件夹失败。',
+                summaryFolderDropFailedLine1: '如果浏览器不支持拖放整个文件夹，请改用“从 Finder 选择文件夹”。',
+                summaryProcessingStoppedTitle: '处理已停止。',
+                summaryProcessingStoppedLine2: '可以展开上方详情，查看最后处理到哪个文件。',
+                downloadDefault: '下载合并后的 SRT',
+                downloadReady: '下载 {{fileName}}',
+                previewPlaceholder: '处理完成后，合并后的字幕文本会显示在这里。',
+                previewReady: '{{fileName}} • {{blockLabel}} • {{charCount}} 个字符',
+                copyText: '复制文本',
+                copyCopied: '已复制',
+                copyManual: '请按 Cmd/Ctrl+C',
+                verbDropped: '已拖入',
+                verbSelected: '已选择',
+                detailMissingSubtitle: '{{stem}}：缺少字幕文件',
+                detailMissingMedia: '{{stem}}：缺少媒体文件',
+                detailDuplicateSubtitle: '{{name}}（{{stem}} 的字幕文件重复）',
+                detailDuplicateMedia: '{{name}}（{{stem}} 的媒体文件重复）',
+                warningIgnoredUnsupported: '已忽略 {{countLabel}}',
+                warningIgnoredNested: '已跳过嵌套子文件夹中的 {{countLabel}}',
+                warningNumberingJumps: '编号存在跳跃：{{ranges}}',
+                durationReadError: '无法读取 {{fileName}} 的媒体时长。',
+                logReadingDroppedFolder: '正在读取拖入的文件夹...',
+                logScanningSelection: '{{sourceVerb}}{{countLabel}}，正在扫描文件夹...',
+                logAnalyzingFiles: '正在分析文件...',
+                logFoundPairs: '找到 {{countLabel}}，输出文件：{{fileName}}',
+                logDone: '完成，已合并 {{countLabel}}，可以下载了。',
+                logReviewNotes: '如果需要，请先查看上面的提示后再下载。',
+                logPairProgress: '配对 {{current}}/{{total}}：{{stem}}',
+                logClipboardWriteFailed: '写入剪贴板失败：{{message}}',
+                logNoReadableFiles: '没有读到可用文件。',
+                logMultipleFolders: '请一次只拖入一个文件夹。\n发现：{{folders}}',
+                logFolderDropFailed: '无法读取拖入的文件夹。\n{{message}}',
+                logMissingNumbersIntro: '以下文件名里缺少顺序编号，无法确定合并顺序：',
+                logDuplicatesIntro: '以下文件试图占用同一组配对：',
+                logIncompleteIntro: '以下文件配对不完整：',
+                logNoValidPairsIntro: '没有找到有效的字幕/媒体配对。',
+                logRepeatedNumbersIntro: '顺序编号必须唯一，以下编号重复了：',
+                logUnexpectedError: '处理过程中出现意外错误：\n{{message}}',
+                logNotesPrefix: '提示：{{notes}}',
+                helperNestedOnly: '你拖入的文件夹里似乎只有嵌套子文件夹。请拖入直接包含编号文件的那一层文件夹。',
+                helperNoPairs: '请放入带编号的 .srt 文件，以及对应的 .mov、.mp4、.m4v 或 .mp3 文件后再试。'
             }
+        };
+
+        const uiState = {
+            summary: { type: 'idle', tone: '', params: {} },
+            previewMeta: { type: 'placeholder', params: {} },
+            copyButtonState: 'default',
+            downloadFileName: '',
+            downloadVisible: false
+        };
+
+        function escapeHtml(value) {
+            return value.replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
         }
 
-        function appendLog(msg) {
-            logText.textContent += "\n" + msg;
+        function t(key, params = {}) {
+            const dictionary = translations[currentLanguage] || translations.en;
+            const template = dictionary[key] ?? translations.en[key] ?? key;
+            return template.replace(/\{\{(\w+)\}\}/g, (_, token) => {
+                const value = params[token];
+                return value === undefined || value === null ? '' : String(value);
+            });
         }
 
-        // 1. Handle File Selection
-        document.getElementById('dirInput').addEventListener('change', async (e) => {
-            handleFiles(Array.from(e.target.files));
-        });
+        function formatNumber(value) {
+            return Number(value).toLocaleString(currentLanguage === 'zh' ? 'zh-CN' : 'en-US');
+        }
 
-        // Drag and Drop support
-        const dropArea = document.querySelector('.upload-area');
+        function countLabel(count, unit) {
+            const number = formatNumber(count);
+            if (currentLanguage === 'zh') {
+                const zhUnits = {
+                    item: '个项目',
+                    pair: '对文件',
+                    file: '个文件',
+                    block: '条字幕'
+                };
+                return `${number}${zhUnits[unit] || ''}`;
+            }
 
-        dropArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = 'var(--accent-color)';
-            dropArea.style.background = 'rgba(0, 113, 227, 0.1)';
-        });
+            const enUnits = {
+                item: ['item', 'items'],
+                pair: ['pair', 'pairs'],
+                file: ['file', 'files'],
+                block: ['block', 'blocks']
+            };
+            const [one, other] = enUnits[unit] || ['', ''];
+            return `${number} ${count === 1 ? one : other}`;
+        }
 
-        dropArea.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = 'var(--border-color)';
-            dropArea.style.background = 'var(--bg-color)';
-        });
+        function sourceVerbLabel(sourceLabel) {
+            return sourceLabel === 'drop' ? t('verbDropped') : t('verbSelected');
+        }
 
-        dropArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = 'var(--border-color)';
-            dropArea.style.background = 'var(--bg-color)';
+        function summarizeNames(names, limit = 3) {
+            const visible = names.slice(0, limit);
+            const remaining = names.length - visible.length;
+            const separator = currentLanguage === 'zh' ? '、' : ', ';
+            const listed = visible.join(separator);
+            if (remaining <= 0) return listed;
+            return currentLanguage === 'zh'
+                ? `${listed} 等另外 ${formatNumber(remaining)} 项`
+                : `${listed} + ${formatNumber(remaining)} more`;
+        }
 
-            // Basic FileList support (folders dropped often come as empty/files depending on browser)
-            // Ideally we use webkitGetAsEntry for folders, but let's try basic file processing first
-            // or just use the input trigger.
-            const items = e.dataTransfer.items;
-            if (items) {
-                // Logic to scan directory from dataTransfer items is complex cross-browser.
-                // For now, simpler to rely on file input or just process whatever files came in.
-                const files = [];
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].kind === 'file') {
-                        const file = items[i].getAsFile();
-                        files.push(file);
-                    }
+        function formatWarningParts(parts) {
+            const localized = parts.map((part) => {
+                switch (part.type) {
+                    case 'ignoredUnsupported':
+                        return t('warningIgnoredUnsupported', { countLabel: countLabel(part.count, 'file') });
+                    case 'ignoredNested':
+                        return t('warningIgnoredNested', { countLabel: countLabel(part.count, 'item') });
+                    case 'sequenceWarnings':
+                        return t('warningNumberingJumps', { ranges: part.ranges.join(', ') });
+                    default:
+                        return '';
                 }
-                if (files.length > 0) handleFiles(files);
-            } else {
-                handleFiles(Array.from(e.dataTransfer.files));
+            }).filter(Boolean);
+
+            if (!localized.length) return '';
+            return currentLanguage === 'zh' ? `${localized.join('，')}。` : `${localized.join('. ')}.`;
+        }
+
+        function setLanguage(language) {
+            currentLanguage = language === 'zh' ? 'zh' : 'en';
+            window.localStorage.setItem('srt-merge-language', currentLanguage);
+            document.documentElement.lang = currentLanguage === 'zh' ? 'zh-Hans' : 'en';
+            document.documentElement.dataset.lang = currentLanguage;
+            document.title = t('pageTitle');
+
+            document.querySelectorAll('[data-i18n]').forEach((element) => {
+                element.textContent = t(element.dataset.i18n);
+            });
+            document.querySelectorAll('[data-i18n-html]').forEach((element) => {
+                element.innerHTML = t(element.dataset.i18nHtml);
+            });
+            document.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
+                element.setAttribute('aria-label', t(element.dataset.i18nAriaLabel));
+            });
+
+            langButtons.forEach((button) => {
+                const isActive = button.dataset.lang === currentLanguage;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', String(isActive));
+            });
+
+            renderSummary();
+            renderPreviewMeta();
+            renderDownloadButton();
+            renderCopyButtonLabel();
+
+            const waitingValues = new Set([
+                translations.en.waitingForInput,
+                translations.zh.waitingForInput
+            ]);
+            if (waitingValues.has(logText.textContent.trim())) {
+                logText.textContent = t('waitingForInput');
+            }
+        }
+
+        function setSummaryState(type, params = {}, tone = '') {
+            uiState.summary = { type, params, tone };
+            renderSummary();
+        }
+
+        function renderSummary() {
+            const { type, tone, params } = uiState.summary;
+            selectionSummary.className = 'selection-summary';
+            if (tone) selectionSummary.classList.add(`is-${tone}`);
+
+            let lines;
+            switch (type) {
+                case 'selectionDetected':
+                    lines = [
+                        { tag: 'strong', text: params.folderName || t('summarySelectedFilesLabel') },
+                        { tag: 'span', text: t('summarySelectionLine1', { sourceVerb: sourceVerbLabel(params.sourceLabel), countLabel: countLabel(params.fileCount, 'item') }) },
+                        { tag: 'span', text: t('summarySelectionLine2') }
+                    ];
+                    break;
+                case 'noUsable':
+                    lines = [
+                        { tag: 'strong', text: t('summaryNoUsableTitle') },
+                        { tag: 'span', text: t('summaryNoUsableLine1') },
+                        { tag: 'span', text: t('summaryNoUsableLine2') }
+                    ];
+                    break;
+                case 'multipleFolders':
+                    lines = [
+                        { tag: 'strong', text: t('summaryMultipleFoldersTitle') },
+                        { tag: 'span', text: params.folders },
+                        { tag: 'span', text: t('summaryMultipleFoldersLine2') }
+                    ];
+                    break;
+                case 'missingNumbers':
+                    lines = [
+                        { tag: 'strong', text: t('summaryMissingNumbersTitle') },
+                        { tag: 'ul', items: params.names },
+                        { tag: 'span', text: t('summaryMissingNumbersLine2') }
+                    ];
+                    break;
+                case 'duplicates':
+                    lines = [
+                        { tag: 'strong', text: t('summaryDuplicatesTitle') },
+                        { tag: 'ul', items: params.names },
+                        { tag: 'span', text: t('summaryDuplicatesLine2') }
+                    ];
+                    break;
+                case 'incompletePairs':
+                    lines = [
+                        { tag: 'strong', text: t('summaryIncompleteTitle') },
+                        { tag: 'ul', items: params.details },
+                        { tag: 'span', text: t('summaryIncompleteLine2') }
+                    ];
+                    break;
+                case 'noValidPairs':
+                    lines = [
+                        { tag: 'strong', text: t('summaryNoValidPairsTitle') },
+                        { tag: 'span', text: params.helperMessage },
+                        { tag: 'span', text: t('summaryNoValidPairsLine2') }
+                    ];
+                    break;
+                case 'ambiguousNumbers':
+                    lines = [
+                        { tag: 'strong', text: t('summaryAmbiguousNumbersTitle') },
+                        { tag: 'ul', items: params.details },
+                        { tag: 'span', text: t('summaryAmbiguousNumbersLine2') }
+                    ];
+                    break;
+                case 'ready':
+                    lines = [
+                        { tag: 'strong', text: params.folderName || t('summarySelectedFilesLabel') },
+                        { tag: 'span', text: t('summaryReadyLine1', { countLabel: countLabel(params.pairCount, 'pair') }) },
+                        { tag: 'span', text: params.warningParts.length ? formatWarningParts(params.warningParts) : t('summaryReadyLine2') },
+                        { tag: 'span', text: t('summaryReadyLine3', { pairs: summarizeNames(params.pairs) }) },
+                        { tag: 'span', text: t('summaryReadyLine4', { fileName: params.fileName }) }
+                    ];
+                    break;
+                case 'folderDropFailed':
+                    lines = [
+                        { tag: 'strong', text: t('summaryFolderDropFailedTitle') },
+                        { tag: 'span', text: t('summaryFolderDropFailedLine1') }
+                    ];
+                    break;
+                case 'processingStopped':
+                    lines = [
+                        { tag: 'strong', text: t('summaryProcessingStoppedTitle') },
+                        { tag: 'span', text: params.message },
+                        { tag: 'span', text: t('summaryProcessingStoppedLine2') }
+                    ];
+                    break;
+                case 'idle':
+                default:
+                    lines = [
+                        { tag: 'strong', text: t('summaryIdleTitle') },
+                        { tag: 'span', text: t('summaryIdleLine1') },
+                        { tag: 'span', text: t('summaryIdleLine2') }
+                    ];
+                    break;
+            }
+
+            selectionSummary.innerHTML = lines
+                .map((line) => {
+                    if (line.tag === 'ul') {
+                        return `<ul class="selection-summary-list">${line.items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+                    }
+                    return `<${line.tag}>${escapeHtml(line.text)}</${line.tag}>`;
+                })
+                .join('');
+        }
+
+        function setPreviewMetaState(type, params = {}) {
+            uiState.previewMeta = { type, params };
+            renderPreviewMeta();
+        }
+
+        function renderPreviewMeta() {
+            const { type, params } = uiState.previewMeta;
+            if (type === 'ready') {
+                previewMeta.textContent = t('previewReady', {
+                    fileName: params.fileName,
+                    blockLabel: countLabel(params.blockCount, 'block'),
+                    charCount: formatNumber(params.charCount)
+                });
+                return;
+            }
+
+            previewMeta.textContent = t('previewPlaceholder');
+        }
+
+        function setCopyButtonState(state = 'default') {
+            uiState.copyButtonState = state;
+            renderCopyButtonLabel();
+        }
+
+        function renderCopyButtonLabel() {
+            const key = uiState.copyButtonState === 'copied'
+                ? 'copyCopied'
+                : uiState.copyButtonState === 'manual'
+                    ? 'copyManual'
+                    : 'copyText';
+            copyPreviewBtn.textContent = t(key);
+        }
+
+        function renderDownloadButton() {
+            downloadBtn.textContent = uiState.downloadFileName
+                ? t('downloadReady', { fileName: uiState.downloadFileName })
+                : t('downloadDefault');
+        }
+
+        function setDropAreaState(state = 'idle') {
+            dropArea.classList.toggle('is-active', state === 'active' || state === 'loading');
+            dropArea.classList.toggle('is-ready', state === 'ready');
+        }
+
+        function setJourneyStage(stage = 'idle') {
+            journeySteps.forEach((step) => {
+                step.classList.remove('is-current', 'is-complete', 'is-error');
+            });
+
+            const mark = (stepNumber, state) => {
+                const step = journeySteps.find((item) => Number(item.dataset.step) === stepNumber);
+                if (step) step.classList.add(state);
+            };
+
+            switch (stage) {
+                case 'input-error':
+                    mark(1, 'is-error');
+                    break;
+                case 'scanning':
+                    mark(1, 'is-complete');
+                    mark(2, 'is-current');
+                    break;
+                case 'ready':
+                    mark(1, 'is-complete');
+                    mark(2, 'is-complete');
+                    mark(3, 'is-current');
+                    break;
+                case 'success':
+                    mark(1, 'is-complete');
+                    mark(2, 'is-complete');
+                    mark(3, 'is-complete');
+                    break;
+                case 'review-error':
+                    mark(1, 'is-complete');
+                    mark(2, 'is-error');
+                    break;
+                case 'merge-error':
+                    mark(1, 'is-complete');
+                    mark(2, 'is-complete');
+                    mark(3, 'is-error');
+                    break;
+                default:
+                    mark(1, 'is-current');
+                    break;
+            }
+        }
+
+        function log(message, options = {}) {
+            const { loading = false, tone = 'muted' } = options;
+            logText.textContent = message;
+            logText.style.color = tone === 'error' ? 'var(--error-color)' :
+                tone === 'success' ? 'var(--success-color)' : 'var(--text-secondary)';
+            spinner.style.display = loading ? 'inline-block' : 'none';
+        }
+
+        function appendLog(message) {
+            logText.textContent += `\n${message}`;
+        }
+
+        async function copyPreviewText() {
+            if (!mergedContent) return;
+
+            try {
+                await navigator.clipboard.writeText(mergedContent);
+                setCopyButtonState('copied');
+                window.setTimeout(() => setCopyButtonState('default'), 1400);
+            } catch (error) {
+                console.error(error);
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(previewContent);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                appendLog(t('logClipboardWriteFailed', { message: error.message }));
+                setCopyButtonState('manual');
+                window.setTimeout(() => {
+                    selection.removeAllRanges();
+                    setCopyButtonState('default');
+                }, 1800);
+            }
+        }
+
+        function logError(message, summaryType, summaryParams = {}, stage = 'review-error', tone = 'error') {
+            log(message, { tone: 'error' });
+            setDropAreaState('idle');
+            setJourneyStage(stage);
+            logPanel.open = true;
+            if (summaryType) {
+                setSummaryState(summaryType, summaryParams, tone);
+            }
+        }
+
+        function createFileRecord(file, relativePath) {
+            return {
+                file,
+                name: file.name,
+                relativePath: relativePath || file.webkitRelativePath || file.name
+            };
+        }
+
+        function normalizeInputFiles(files) {
+            return files.filter(Boolean).map((file) => createFileRecord(file, file.webkitRelativePath || file.name));
+        }
+
+        function getRelativePath(record) {
+            return record.relativePath || record.file.webkitRelativePath || record.name;
+        }
+
+        function getTopFolderName(records) {
+            const first = records.find((record) => getRelativePath(record));
+            if (!first) return '';
+            const [root] = getRelativePath(first).split('/');
+            return root && root !== first.name ? root : '';
+        }
+
+        function getRootFolderNames(records) {
+            return Array.from(
+                new Set(
+                    records
+                        .map((record) => getRelativePath(record).split('/').filter(Boolean))
+                        .filter((parts) => parts.length > 1)
+                        .map(([root]) => root)
+                )
+            );
+        }
+
+        async function readHandleRecursive(handle, parentPath = '') {
+            if (handle.kind === 'file') {
+                const file = await handle.getFile();
+                return [createFileRecord(file, `${parentPath}${handle.name}`)];
+            }
+
+            const nextPath = `${parentPath}${handle.name}/`;
+            const records = [];
+            for await (const [, childHandle] of handle.entries()) {
+                records.push(...await readHandleRecursive(childHandle, nextPath));
+            }
+            return records;
+        }
+
+        function readFileEntry(entry, relativePath) {
+            return new Promise((resolve, reject) => {
+                entry.file(
+                    (file) => resolve(createFileRecord(file, relativePath)),
+                    reject
+                );
+            });
+        }
+
+        function readAllDirectoryEntries(directoryEntry) {
+            const reader = directoryEntry.createReader();
+            const entries = [];
+
+            return new Promise((resolve, reject) => {
+                function readBatch() {
+                    reader.readEntries((batch) => {
+                        if (!batch.length) {
+                            resolve(entries);
+                            return;
+                        }
+                        entries.push(...batch);
+                        readBatch();
+                    }, reject);
+                }
+
+                readBatch();
+            });
+        }
+
+        async function readEntryRecursive(entry, parentPath = '') {
+            const relativePath = `${parentPath}${entry.name}`;
+
+            if (entry.isFile) {
+                return [await readFileEntry(entry, relativePath)];
+            }
+
+            const children = await readAllDirectoryEntries(entry);
+            const nested = await Promise.all(
+                children.map((child) => readEntryRecursive(child, `${relativePath}/`))
+            );
+            return nested.flat();
+        }
+
+        async function collectDroppedFiles(dataTransfer) {
+            const directFiles = normalizeInputFiles(Array.from(dataTransfer?.files || []));
+            const items = Array.from(dataTransfer?.items || []).filter((item) => item.kind === 'file');
+
+            if (!items.length) {
+                return directFiles;
+            }
+
+            const handleRecords = [];
+            let sawDirectoryHandle = false;
+            for (const item of items) {
+                if (typeof item.getAsFileSystemHandle !== 'function') continue;
+
+                try {
+                    const handle = await item.getAsFileSystemHandle();
+                    if (!handle) continue;
+                    if (handle.kind === 'directory') sawDirectoryHandle = true;
+                    handleRecords.push(...await readHandleRecursive(handle));
+                } catch (error) {
+                    console.warn('Unable to read dropped handle', error);
+                }
+            }
+            if (sawDirectoryHandle && handleRecords.length) {
+                return handleRecords;
+            }
+            if (directFiles.length) {
+                return directFiles;
+            }
+            if (handleRecords.length) {
+                return handleRecords;
+            }
+
+            const entryRecords = [];
+            let sawDirectoryEntry = false;
+            for (const item of items) {
+                if (typeof item.webkitGetAsEntry !== 'function') continue;
+
+                const entry = item.webkitGetAsEntry();
+                if (!entry) continue;
+                if (entry.isDirectory) sawDirectoryEntry = true;
+                entryRecords.push(...await readEntryRecursive(entry));
+            }
+            if (sawDirectoryEntry && entryRecords.length) {
+                return entryRecords;
+            }
+            if (directFiles.length) {
+                return directFiles;
+            }
+            if (entryRecords.length) {
+                return entryRecords;
+            }
+
+            return directFiles;
+        }
+
+        copyPreviewBtn.addEventListener('click', copyPreviewText);
+        langButtons.forEach((button) => {
+            button.addEventListener('click', () => setLanguage(button.dataset.lang));
+        });
+
+        async function handleFiles(fileRecords, sourceLabel = 'selection') {
+            if (!fileRecords.length) {
+                logError(
+                    t('logNoReadableFiles'),
+                    'noUsable',
+                    {},
+                    'input-error'
+                );
+                return;
+            }
+
+            const rootFolders = getRootFolderNames(fileRecords);
+            if (rootFolders.length > 1) {
+                logError(
+                    t('logMultipleFolders', { folders: rootFolders.join(', ') }),
+                    'multipleFolders',
+                    { folders: rootFolders.join(', ') },
+                    'input-error'
+                );
+                return;
+            }
+
+            const folderName = getTopFolderName(fileRecords);
+
+            setJourneyStage('scanning');
+            setDropAreaState('ready');
+            logPanel.open = false;
+            setSummaryState('selectionDetected', {
+                folderName,
+                fileCount: fileRecords.length,
+                sourceLabel
+            }, 'info');
+            log(t('logScanningSelection', {
+                sourceVerb: sourceVerbLabel(sourceLabel),
+                countLabel: countLabel(fileRecords.length, 'item')
+            }), { loading: true });
+
+            await new Promise((resolve) => setTimeout(resolve, 60));
+            await processFiles(fileRecords, folderName);
+        }
+
+        dirInput.addEventListener('change', async (event) => {
+            const files = normalizeInputFiles(Array.from(event.target.files));
+            event.target.value = '';
+            await handleFiles(files, 'selection');
+        });
+
+        dropArea.addEventListener('click', () => {
+            dirInput.value = '';
+            dirInput.click();
+        });
+
+        dropArea.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                dirInput.value = '';
+                dirInput.click();
             }
         });
 
-        async function handleFiles(files) {
-            if (files.length === 0) return;
-            log("Found " + files.length + " files. Scanning...", true);
+        dropArea.addEventListener('dragenter', (event) => {
+            event.preventDefault();
+            dragDepth += 1;
+            setDropAreaState('active');
+        });
 
-            // Small delay to allow UI to update
-            setTimeout(() => processFiles(files), 50);
-        }
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+            setDropAreaState('active');
+        });
 
-        // 2. Extract number from filename
+        dropArea.addEventListener('dragleave', (event) => {
+            event.preventDefault();
+            dragDepth = Math.max(0, dragDepth - 1);
+            if (dragDepth === 0) {
+                setDropAreaState(downloadBtn.style.display === 'inline-flex' ? 'ready' : 'idle');
+            }
+        });
+
+        dropArea.addEventListener('drop', async (event) => {
+            event.preventDefault();
+            dragDepth = 0;
+            setDropAreaState('loading');
+            setJourneyStage('scanning');
+            logPanel.open = false;
+            log(t('logReadingDroppedFolder'), { loading: true });
+
+            try {
+                const fileRecords = await collectDroppedFiles(event.dataTransfer);
+                await handleFiles(fileRecords, 'drop');
+            } catch (error) {
+                console.error(error);
+                logError(
+                    t('logFolderDropFailed', { message: error.message }),
+                    'folderDropFailed',
+                    {},
+                    'input-error'
+                );
+            }
+        });
+
         function extractNumber(filename) {
             const matchStart = filename.match(/^(\d+)/);
             if (matchStart) return parseInt(matchStart[1]);
@@ -417,6 +1668,20 @@
             if (matchEnd) return parseInt(matchEnd[1]);
 
             return null;
+        }
+
+        function getStem(fileName) {
+            return fileName.replace(/\.[^.]+$/, '');
+        }
+
+        function normalizePairStem(stem) {
+            return stem
+                .normalize('NFKC')
+                .replace(/[\u200B-\u200D\uFEFF]/g, '')
+                .replace(/[‐‑‒–—―−]/g, '-')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .toLowerCase();
         }
 
         // 3. Time Helpers
@@ -438,22 +1703,24 @@
             return `${pad(h)}:${pad(m)}:${pad(s)},${pad(ms, 3)}`;
         }
 
-        // 4. Get Video Duration via Browser
-        function getVideoDuration(file) {
+        function getMediaDuration(file) {
             return new Promise((resolve, reject) => {
-                const video = document.createElement('video');
-                video.preload = 'metadata';
+                const mediaTag = file.name.toLowerCase().endsWith('.mp3') ? 'audio' : 'video';
+                const media = document.createElement(mediaTag);
+                media.preload = 'metadata';
+                const objectUrl = URL.createObjectURL(file);
 
-                video.onloadedmetadata = function () {
-                    window.URL.revokeObjectURL(video.src);
-                    resolve(video.duration * 1000);
-                }
+                media.onloadedmetadata = function () {
+                    URL.revokeObjectURL(objectUrl);
+                    resolve(media.duration * 1000);
+                };
 
-                video.onerror = function () {
-                    resolve(0);
-                }
+                media.onerror = function () {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error(t('durationReadError', { fileName: file.name })));
+                };
 
-                video.src = URL.createObjectURL(file);
+                media.src = objectUrl;
             });
         }
 
@@ -486,90 +1753,172 @@
             return "merged_subtitles.srt";
         }
 
-        // 5. Main Processing Logic
-        // 5. Main Processing Logic
-        async function processFiles(fileList) {
-            document.getElementById('downloadBtn').style.display = 'none';
-            document.getElementById('preview-container').style.display = 'none';
-            document.getElementById('preview-content').textContent = '';
+        async function processFiles(fileRecords, folderName = '') {
+            downloadBtn.style.display = 'none';
+            uiState.downloadVisible = false;
+            previewContainer.style.display = 'none';
+            previewContent.textContent = '';
+            uiState.downloadFileName = '';
+            renderDownloadButton();
+            setCopyButtonState('default');
+            setPreviewMetaState('placeholder');
+            logPanel.open = false;
+            log(t('logAnalyzingFiles'), { loading: true });
 
-            // Reset Log
-            logText.style.color = 'var(--text-secondary)';
-            logText.textContent = 'Analyzing files...';
-            spinner.style.display = 'inline-block';
+            const ignoredUnsupported = [];
+            const ignoredNested = [];
+            const missingNumbers = [];
+            const duplicates = [];
+            const groups = new Map();
 
-            const validExtensions = ['.srt', '.mov'];
-            const ignoredFiles = ['.ds_store']; // lowercase
-
-            const extraFiles = [];
-            const pairs = {};
-
-            // 1. Initial Scan & Validation
-            for (let f of fileList) {
-                const name = f.name;
+            for (const record of fileRecords) {
+                const name = record.name;
                 const lowerName = name.toLowerCase();
+                const relativePath = getRelativePath(record);
+                const pathParts = relativePath.split('/').filter(Boolean);
 
-                // Check if file is in a subfolder (e.g. "Root/Sub/file.txt" has > 2 parts)
-                // We only want files in the root of the selection ("Root/file.txt")
-                if (f.webkitRelativePath && f.webkitRelativePath.split('/').length > 2) {
+                if (pathParts.length > 2) {
+                    ignoredNested.push(relativePath);
                     continue;
                 }
 
-                // Skip hidden/system files
-                if (name.startsWith('.') || ignoredFiles.includes(lowerName)) continue;
+                if (name.startsWith('.') || ignoredFileNames.has(lowerName)) continue;
 
-                // Check extension
-                const isSrt = lowerName.endsWith('.srt');
-                const isMov = lowerName.endsWith('.mov');
+                const extension = lowerName.match(/(\.[^.]+)$/)?.[1] || '';
+                const isSrt = extension === '.srt';
+                const isMedia = supportedMediaExtensions.has(extension);
 
-                if (!isSrt && !isMov) {
-                    extraFiles.push(name);
+                if (!isSrt && !isMedia) {
+                    ignoredUnsupported.push(name);
                     continue;
                 }
 
-                const num = extractNumber(name);
-                if (num === null) {
-                    extraFiles.push(name + " (no number found)");
+                const stem = getStem(name);
+                const normalizedStem = normalizePairStem(stem);
+                const orderNumber = extractNumber(normalizedStem);
+                if (orderNumber === null) {
+                    missingNumbers.push(name);
                     continue;
                 }
 
-                if (!pairs[num]) pairs[num] = { id: num };
+                const key = normalizedStem;
+                const group = groups.get(key) || { id: orderNumber, stem, srt: null, media: null };
+                groups.set(key, group);
 
                 if (isSrt) {
-                    if (pairs[num].srt) extraFiles.push(name + " (duplicate ID)");
-                    else pairs[num].srt = f;
-                } else if (isMov) {
-                    if (pairs[num].mov) extraFiles.push(name + " (duplicate ID)");
-                    else pairs[num].mov = f;
+                    if (group.srt) duplicates.push(t('detailDuplicateSubtitle', { name, stem: group.stem }));
+                    else group.srt = record.file;
+                } else {
+                    if (group.media) duplicates.push(t('detailDuplicateMedia', { name, stem: group.stem }));
+                    else group.media = record.file;
                 }
             }
 
-            // 2. Report Extra Files Error
-            if (extraFiles.length > 0) {
-                logError("Error: Folder contains unsupported or extra files:\n" + extraFiles.join("\n"));
+            if (missingNumbers.length > 0) {
+                logError(
+                    `${t('logMissingNumbersIntro')}\n${missingNumbers.join('\n')}`,
+                    'missingNumbers',
+                    { names: missingNumbers }
+                );
                 return;
             }
 
-            // 3. Check for Mismatched Pairs
-            const sortedPairs = Object.values(pairs).sort((a, b) => a.id - b.id);
-            const mismatched = sortedPairs.filter(p => !p.srt || !p.mov);
+            if (duplicates.length > 0) {
+                logError(
+                    `${t('logDuplicatesIntro')}\n${duplicates.join('\n')}`,
+                    'duplicates',
+                    { names: duplicates }
+                );
+                return;
+            }
+
+            const sortedPairs = Array.from(groups.values()).sort((a, b) => a.id - b.id || naturalSort(a.stem, b.stem));
+            const mismatched = sortedPairs.filter((pair) => !pair.srt || !pair.media);
 
             if (mismatched.length > 0) {
-                const details = mismatched.map(p => {
-                    const existing = p.srt ? p.srt.name : p.mov.name;
-                    return `ID ${p.id}: Found ${existing}, but missing counterpart.`;
-                }).join("\n");
-                logError("Error: Mismatched pairs found.\n" + details);
+                const details = mismatched.map((pair) => {
+                    if (!pair.srt) return t('detailMissingSubtitle', { stem: pair.stem });
+                    return t('detailMissingMedia', { stem: pair.stem });
+                });
+                logError(
+                    `${t('logIncompleteIntro')}\n${details.join('\n')}`,
+                    'incompletePairs',
+                    { details }
+                );
                 return;
             }
 
-            if (sortedPairs.length === 0) {
-                logError("Error: No valid SRT/MOV pairs found.");
+            if (!sortedPairs.length) {
+                const helperMessage = ignoredNested.length
+                    ? t('helperNestedOnly')
+                    : t('helperNoPairs');
+                logError(
+                    `${t('logNoValidPairsIntro')}\n${helperMessage}`,
+                    'noValidPairs',
+                    { helperMessage }
+                );
                 return;
+            }
+
+            const duplicateOrderNumbers = Array.from(
+                sortedPairs.reduce((map, pair) => {
+                    if (!map.has(pair.id)) map.set(pair.id, []);
+                    map.get(pair.id).push(pair.stem);
+                    return map;
+                }, new Map()).entries()
+            ).filter(([, stems]) => stems.length > 1);
+
+            if (duplicateOrderNumbers.length > 0) {
+                const details = duplicateOrderNumbers.map(([id, stems]) => `${id}: ${stems.join(', ')}`);
+                logError(
+                    `${t('logRepeatedNumbersIntro')}\n${details.join('\n')}`,
+                    'ambiguousNumbers',
+                    { details }
+                );
+                return;
+            }
+
+            const sequenceWarnings = [];
+            for (let i = 1; i < sortedPairs.length; i++) {
+                if (sortedPairs[i].id !== sortedPairs[i - 1].id + 1) {
+                    sequenceWarnings.push(`${sortedPairs[i - 1].id} to ${sortedPairs[i].id}`);
+                }
             }
 
             mergedFileName = getSmartFilename(sortedPairs[0].srt, sortedPairs[sortedPairs.length - 1].srt);
-            log(`Processing ${sortedPairs.length} pairs... Output: ${mergedFileName}`, true);
+
+            const warningParts = [];
+            if (ignoredUnsupported.length) {
+                warningParts.push({ type: 'ignoredUnsupported', count: ignoredUnsupported.length });
+            }
+            if (ignoredNested.length) {
+                warningParts.push({ type: 'ignoredNested', count: ignoredNested.length });
+            }
+            if (sequenceWarnings.length) {
+                warningParts.push({ type: 'sequenceWarnings', ranges: sequenceWarnings });
+            }
+
+            setJourneyStage('ready');
+            uiState.downloadFileName = mergedFileName;
+            renderDownloadButton();
+            setSummaryState('ready', {
+                folderName: folderName || mergedFileName,
+                pairCount: sortedPairs.length,
+                warningParts,
+                pairs: sortedPairs.map((pair) => pair.stem),
+                fileName: mergedFileName
+            }, warningParts.length ? 'warning' : 'success');
+
+            log(
+                t('logFoundPairs', {
+                    countLabel: countLabel(sortedPairs.length, 'pair'),
+                    fileName: mergedFileName
+                }),
+                { loading: true }
+            );
+            if (warningParts.length) {
+                appendLog(t('logNotesPrefix', { notes: formatWarningParts(warningParts).replace(/[。.]$/, '') }));
+            }
 
             let cumulativeDuration = 0;
             let finalSrtContent = "";
@@ -578,19 +1927,21 @@
             try {
                 for (let i = 0; i < sortedPairs.length; i++) {
                     const pair = sortedPairs[i];
+                    appendLog(t('logPairProgress', {
+                        current: formatNumber(i + 1),
+                        total: formatNumber(sortedPairs.length),
+                        stem: pair.stem
+                    }));
 
                     if (i > 0) {
-                        const prevMov = sortedPairs[i - 1].mov;
-                        const duration = await getVideoDuration(prevMov);
-                        cumulativeDuration += duration;
+                        const previousDuration = await getMediaDuration(sortedPairs[i - 1].media);
+                        cumulativeDuration += previousDuration;
                     }
 
                     const text = await pair.srt.text();
-
-                    // Regex corrected: (\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})
                     const shiftedText = text.replace(
                         /(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/g,
-                        (match, start, end) => {
+                        (_, start, end) => {
                             const newStart = msToTime(timeToMs(start) + cumulativeDuration);
                             const newEnd = msToTime(timeToMs(end) + cumulativeDuration);
                             return `${newStart} --> ${newEnd}`;
@@ -604,7 +1955,6 @@
                         if (!block) continue;
 
                         const lines = block.split('\n');
-                        // Remove old index if present
                         if (lines.length > 0 && /^\d+$/.test(lines[0].trim())) {
                             lines.shift();
                         }
@@ -615,23 +1965,40 @@
                 }
 
                 mergedContent = finalSrtContent;
-                log("Done! Ready to download.", false);
-                document.getElementById('downloadBtn').style.display = 'inline-block';
-
-                document.getElementById('preview-content').textContent = mergedContent;
-                document.getElementById('preview-container').style.display = 'block';
-
-            } catch (err) {
-                logError("Unexpected error during processing: " + err.message);
-                console.error(err);
+                setJourneyStage('success');
+                log(t('logDone', {
+                    countLabel: countLabel(sortedPairs.length, 'pair')
+                }), {
+                    tone: 'success'
+                });
+                if (warningParts.length) {
+                    appendLog(t('logReviewNotes'));
+                }
+                downloadBtn.style.display = 'inline-flex';
+                uiState.downloadVisible = true;
+                renderDownloadButton();
+                setPreviewMetaState('ready', {
+                    fileName: mergedFileName,
+                    blockCount: globalIndex - 1,
+                    charCount: mergedContent.length
+                });
+                previewContent.textContent = mergedContent;
+                previewContainer.style.display = 'block';
+                setDropAreaState('ready');
+                previewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (error) {
+                console.error(error);
+                logError(
+                    t('logUnexpectedError', { message: error.message }),
+                    'processingStopped',
+                    { message: error.message },
+                    'merge-error'
+                );
             }
         }
 
-        function logError(msg) {
-            logText.textContent = msg;
-            logText.style.color = '#d9534f'; // Red for error
-            spinner.style.display = 'none';
-        }
+        setLanguage(currentLanguage);
+        logText.textContent = t('waitingForInput');
 
         function downloadResult() {
             const blob = new Blob([mergedContent], { type: 'text/srt' });
@@ -642,6 +2009,7 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
     </script>
 </body>
